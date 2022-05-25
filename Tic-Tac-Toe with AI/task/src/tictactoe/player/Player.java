@@ -20,11 +20,19 @@ public abstract class Player {
         this.field = field;
     }
 
+    /**
+     * Имплементация родительского абстрактного метода
+     */
     public abstract void move();
 
+    /**
+     * Сделать ход
+     * @param x строка игрового поля
+     * @param y колонка игрового поля
+     */
     protected void doMove(int x, int y) {
 
-        if (field.isSomeoneWin()) {
+        if (field.isSomeoneWin(true)) {
             return;
         }
 
@@ -33,7 +41,7 @@ public abstract class Player {
         field.getField()[x][y] = getMoveCharacter().getSymbol();
         field.print();
 
-        if (!field.isSomeoneWin()) {
+        if (!field.isSomeoneWin(true)) {
             Main.game.nextMove();
         }
     }

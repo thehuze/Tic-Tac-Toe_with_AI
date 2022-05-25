@@ -3,6 +3,7 @@ package tictactoe.entity;
 public enum MoveCharacter {
 
     X('X'),
+    EMPTY('_'),
     O('O');
 
     private final char symbol;

@@ -16,6 +16,9 @@ public class Game {
     private Player player_one;
     private Player player_two;
 
+    /**
+     * Начать игру. Создает поле и вызывает прием команд пользователя
+     */
     public void start() {
 
         field = new Field();
@@ -66,6 +69,9 @@ public class Game {
         nextMove();
     }
 
+    /**
+     * Продолжить игру. Вызывает ход следующего игрока
+     */
     public void nextMove() {
         if (field.amountOfMoves % 2 == 0) {
             player_one.move();

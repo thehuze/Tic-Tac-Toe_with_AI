@@ -3,13 +3,18 @@ package tictactoe.player;
 import tictactoe.entity.Difficulty;
 import tictactoe.entity.MoveCharacter;
 import tictactoe.game.Field;
+import tictactoe.game.Minimax;
+import tictactoe.game.Pos;
 
 import java.util.Random;
 
 public class AI extends Player {
 
+    Minimax minimax;
+
     public AI(Field field, Difficulty difficulty, MoveCharacter moveCharacter) {
         super(difficulty, field, moveCharacter);
+        this.minimax = new Minimax();
     }
 
     @Override
@@ -26,12 +31,20 @@ public class AI extends Player {
                 moveMedium();
                 break;
             }
+            case HARD: {
+                moveHard();
+                break;
+            }
             default: {
                 moveEasy();
             }
         }
     }
 
+    /**
+     * Обычная сложность ИИ:
+     * Оппонент ходит на случайное свободное поле
+     */
     public void moveEasy() {
         Random random = new Random();
 
@@ -50,6 +63,12 @@ public class AI extends Player {
         }
     }
 
+    /**
+     * Средняя сложноть ИИ:
+     * Если оппонент в шаге от победы, то компьютер мешает ему.
+     * Если компьютер в шаге от победы, то компьютер побеждает.
+     * Иначе: случайный ход
+     */
     public void moveMedium() {
         // Перебираем все возможные варианты победы
         for (int[][] win : Field.win_conditions) {
@@ -79,5 +98,21 @@ public class AI extends Player {
             }
         }
         moveEasy();
+    }
+
+    /**
+     * Максимальная сложность ИИ:
+     * Компьютер просчитывает несколько шагов вперед и двигается
+     * по наиболее выигрышной тактике:
+     * Алгоритм Минимакс (How to make your Tic Tac Toe game unbeatable by using the minimax algorithm)
+     */
+    public void moveHard() {
+        Pos pos = minimax.findOptimalMovement(field, moveCharacter);
+        if (pos != null) {
+            doMove(pos.getRow(), pos.getCol());
+        }
+        else {
+            moveMedium();
+        }
     }
 }

@@ -1,6 +1,10 @@
 package tictactoe.game;
 
+import tictactoe.entity.MoveCharacter;
+
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Field {
 
@@ -14,7 +18,30 @@ public class Field {
         declareConditions();
     }
 
-    public boolean isSomeoneWin() {
+    public Field(int amountOfMoves, char[][] field) {
+        this.amountOfMoves = amountOfMoves;
+        this.field = field;
+        declareConditions();
+    }
+
+    /**
+     * Вывести на вывод поле в виде матрицы
+     */
+    public void print() {
+        System.out.println("---------");
+        System.out.println("| " + Arrays.toString(field[0]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
+        System.out.println("| " + Arrays.toString(field[1]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
+        System.out.println("| " + Arrays.toString(field[2]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
+        System.out.println("---------");
+
+    }
+
+    /**
+     * Проверить, есть ли у игры победитель
+     * @param output - необходимость выводить сообщения о победе
+     * @return true - игра окончена, false - игра продолжается
+     */
+    public boolean isSomeoneWin(boolean output) {
         for (int[][] win_condition : win_conditions) {
             int x_counter = 0;
             int o_counter = 0;
@@ -23,29 +50,20 @@ public class Field {
                 o_counter = field[into[0]][into[1]] == 'O' ? o_counter + 1 : 0;
 
                 if (getAmountOfMoves() >= 9) {
-                    System.out.println("Draw");
+                    if (output) System.out.println("Draw");
                     return true;
                 }
                 if (x_counter >= 3) {
-                    System.out.println("X wins");
+                    if (output) System.out.println("X wins");
                     return true;
                 }
                 if (o_counter >= 3) {
-                    System.out.println("O wins");
+                    if (output) System.out.println("O wins");
                     return true;
                 }
             }
         }
         return false;
-    }
-
-    public void print() {
-        System.out.println("---------");
-        System.out.println("| " + Arrays.toString(field[0]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
-        System.out.println("| " + Arrays.toString(field[1]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
-        System.out.println("| " + Arrays.toString(field[2]).replace(",", "").replace("_", " ").replace("[", "").replace("]", "") + " |");
-        System.out.println("---------");
-
     }
 
     public char[][] getField() {
@@ -95,4 +113,30 @@ public class Field {
         win_conditions[7][2] = new int[]{2, 0};
     }
 
+
+    // MinixMax
+
+    public Set<Pos> getFreePositions() {
+        Set<Pos> posSet = new HashSet<>();
+        for (int row = 0; row < field.length; row++) {
+            for (int col = 0; col < field[row].length; col++) {
+                if (field[row][col] == '_') {
+                    posSet.add(new Pos(row, col));
+                }
+            }
+        }
+        return posSet;
+    }
+
+    public void setCharAtPosition(Pos pos, MoveCharacter character) {
+        this.field[pos.getRow()][pos.getCol()] = character.getSymbol();
+    }
+
+    public char getCharAtPosition(Pos pos) {
+        return field[pos.getRow()][pos.getCol()];
+    }
+
+    public Field copy() {
+        return new Field(this.amountOfMoves, this.field);
+    }
 }
